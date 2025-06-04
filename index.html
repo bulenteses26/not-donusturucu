@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Dönüştürücü</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Hafif gri arka plan */
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border border-gray-200">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Not Dönüştürücü</h1>
+        <p class="text-gray-600 mb-6 text-center">Lütfen notunuzu girin. Sistem, notunuzu tanımlı dönüşüm tablosuna göre 100'lük karşılığı olarak gösterecektir.</p>
+
+        <div class="mb-6">
+            <label for="noteInput" class="block text-gray-700 text-sm font-medium mb-2">Notunuz:</label>
+            <input
+                type="number"
+                id="noteInput"
+                placeholder="Örn: 3.02"
+                class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                step="0.01"
+            />
+            <p id="noteInputError" class="text-red-500 text-xs italic mt-2 hidden">Lütfen geçerli bir not girin.</p>
+            <p id="notFoundMessage" class="text-orange-500 text-xs italic mt-2 hidden">Girilen not dönüşüm tablosunda bulunamadı.</p>
+        </div>
+
+        <button
+            id="convertButton"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-200 ease-in-out shadow-md hover:shadow-lg"
+        >
+            Notu Dönüştür
+        </button>
+
+        <div id="resultDisplay" class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg text-center hidden">
+            <p class="text-lg font-medium text-blue-800">100'lük Karşılığı:</p>
+            <p id="convertedNote" class="text-4xl font-extrabold text-blue-700 mt-2">--</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM elementlerini seçme
+        const noteInput = document.getElementById('noteInput');
+        const convertButton = document.getElementById('convertButton');
+        const resultDisplay = document.getElementById('resultDisplay');
+        const convertedNote = document.getElementById('convertedNote');
+        const noteInputError = document.getElementById('noteInputError');
+        const notFoundMessage = document.getElementById('notFoundMessage');
+
+        // Dönüşüm tablosu
+        // Kullanıcı tarafından sağlanan tam dönüşüm cetveli buraya aktarılmıştır.
+        // Anahtar (key) olarak notu (örn: 3.02), değer (value) olarak 100'lük karşılığını (örn: 77.13) kullanır.
+        // Ondalık ayırıcı olarak nokta (.) kullanılmıştır.
+        const conversionTable = {
+            "1.00": 30.00,
+            "1.01": 30.23,
+            "1.02": 30.46,
+            "1.03": 30.70,
+            "1.04": 30.93,
+            "1.05": 31.16,
+            "1.06": 31.40,
+            "1.07": 31.63,
+            "1.08": 31.86,
+            "1.09": 32.10,
+            "1.10": 32.33,
+            "1.11": 32.56,
+            "1.12": 32.80,
+            "1.13": 33.03,
+            "1.14": 33.26,
+            "1.15": 33.50,
+            "1.16": 33.73,
+            "1.17": 33.96,
+            "1.18": 34.20,
+            "1.19": 34.43,
+            "1.20": 34.66,
+            "1.21": 34.90,
+            "1.22": 35.13,
+            "1.23": 35.36,
+            "1.24": 35.60,
+            "1.25": 35.83,
+            "1.26": 36.06,
+            "1.27": 36.30,
+            "1.28": 36.53,
+            "1.29": 36.76,
+            "1.30": 37.00,
+            "1.31": 37.23,
+            "1.32": 37.46,
+            "1.33": 37.70,
+            "1.34": 37.93,
+            "1.35": 38.16,
+            "1.36": 38.40,
+            "1.37": 38.63,
+            "1.38": 38.86,
+            "1.39": 39.10,
+            "1.40": 39.33,
+            "1.41": 39.56,
+            "1.42": 39.80,
+            "1.43": 40.03,
+            "1.44": 40.26,
+            "1.45": 40.50,
+            "1.46": 40.73,
+            "1.47": 40.96,
+            "1.48": 41.20,
+            "1.49": 41.43,
+            "1.50": 41.66,
+            "1.51": 41.90,
+            "1.52": 42.13,
+            "1.53": 42.36,
+            "1.54": 42.60,
+            "1.55": 42.83,
+            "1.56": 43.06,
+            "1.57": 43.30,
+            "1.58": 43.53,
+            "1.59": 43.76,
+            "1.60": 44.00,
+            "1.61": 44.23,
+            "1.62": 44.46,
+            "1.63": 44.70,
+            "1.64": 44.93,
+            "1.65": 45.16,
+            "1.66": 45.40,
+            "1.67": 45.63,
+            "1.68": 45.86,
+            "1.69": 46.10,
+            "1.70": 46.33,
+            "1.71": 46.56,
+            "1.72": 46.80,
+            "1.73": 47.03,
+            "1.74": 47.26,
+            "1.75": 47.50,
+            "1.76": 47.73,
+            "1.77": 47.96,
+            "1.78": 48.20,
+            "1.79": 48.43,
+            "1.80": 48.66,
+            "1.81": 48.90,
+            "1.82": 49.13,
+            "1.83": 49.36,
+            "1.84": 49.60,
+            "1.85": 49.83,
+            "1.86": 50.06,
+            "1.87": 50.30,
+            "1.88": 50.53,
+            "1.89": 50.76,
+            "1.90": 51.00,
+            "1.91": 51.23,
+            "1.92": 51.46,
+            "1.93": 51.70,
+            "1.94": 51.93,
+            "1.95": 52.16,
+            "1.96": 52.40,
+            "1.97": 52.63,
+            "1.98": 52.86,
+            "1.99": 53.10,
+            "2.00": 53.33,
+            "2.01": 53.56,
+            "2.02": 53.80,
+            "2.03": 54.03,
+            "2.04": 54.26,
+            "2.05": 54.50,
+            "2.06": 54.73,
+            "2.07": 54.96,
+            "2.08": 55.20,
+            "2.09": 55.43,
+            "2.10": 55.66,
+            "2.11": 55.90,
+            "2.12": 56.13,
+            "2.13": 56.36,
+            "2.14": 56.60,
+            "2.15": 56.83,
+            "2.16": 57.06,
+            "2.17": 57.30,
+            "2.18": 57.53,
+            "2.19": 57.76,
+            "2.20": 58.00,
+            "2.21": 58.23,
+            "2.22": 58.46,
+            "2.23": 58.70,
+            "2.24": 58.93,
+            "2.25": 59.16,
+            "2.26": 59.40,
+            "2.27": 59.63,
+            "2.28": 59.86,
+            "2.29": 60.10,
+            "2.30": 60.33,
+            "2.31": 60.56,
+            "2.32": 60.80,
+            "2.33": 61.03,
+            "2.34": 61.26,
+            "2.35": 61.50,
+            "2.36": 61.73,
+            "2.37": 61.96,
+            "2.38": 62.20,
+            "2.39": 62.43,
+            "2.40": 62.66,
+            "2.41": 62.90,
+            "2.42": 63.13,
+            "2.43": 63.36,
+            "2.44": 63.60,
+            "2.45": 63.83,
+            "2.46": 64.06,
+            "2.47": 64.30,
+            "2.48": 64.53,
+            "2.49": 64.76,
+            "2.50": 65.00,
+            "2.51": 65.23,
+            "2.52": 65.46,
+            "2.53": 65.70,
+            "2.54": 65.93,
+            "2.55": 66.16,
+            "2.56": 66.40,
+            "2.57": 66.63,
+            "2.58": 66.86,
+            "2.59": 67.10,
+            "2.60": 67.33,
+            "2.61": 67.56,
+            "2.62": 67.80,
+            "2.63": 68.03,
+            "2.64": 68.26,
+            "2.65": 68.50,
+            "2.66": 68.73,
+            "2.67": 68.96,
+            "2.68": 69.20,
+            "2.69": 69.43,
+            "2.70": 69.66,
+            "2.71": 69.90,
+            "2.72": 70.13,
+            "2.73": 70.36,
+            "2.74": 70.60,
+            "2.75": 70.83,
+            "2.76": 71.06,
+            "2.77": 71.30,
+            "2.78": 71.53,
+            "2.79": 71.76,
+            "2.80": 72.00,
+            "2.81": 72.23,
+            "2.82": 72.46,
+            "2.83": 72.70,
+            "2.84": 72.93,
+            "2.85": 73.16,
+            "2.86": 73.40,
+            "2.87": 73.63,
+            "2.88": 73.86,
+            "2.89": 74.10,
+            "2.90": 74.33,
+            "2.91": 74.56,
+            "2.92": 74.80,
+            "2.93": 75.03,
+            "2.94": 75.26,
+            "2.95": 75.50,
+            "2.96": 75.73,
+            "2.97": 75.96,
+            "2.98": 76.20,
+            "2.99": 76.43,
+            "3.00": 76.66,
+            "3.01": 76.90,
+            "3.02": 77.13,
+            "3.03": 77.36,
+            "3.04": 77.60,
+            "3.05": 77.83,
+            "3.06": 78.06,
+            "3.07": 78.30,
+            "3.08": 78.53,
+            "3.09": 78.76,
+            "3.10": 79.00,
+            "3.11": 79.23,
+            "3.12": 79.46,
+            "3.13": 79.70,
+            "3.14": 79.93,
+            "3.15": 80.16,
+            "3.16": 80.40,
+            "3.17": 80.63,
+            "3.18": 80.86,
+            "3.19": 81.10,
+            "3.20": 81.33,
+            "3.21": 81.56,
+            "3.22": 81.80,
+            "3.23": 82.03,
+            "3.24": 82.26,
+            "3.25": 82.50,
+            "3.26": 82.73,
+            "3.27": 82.96,
+            "3.28": 83.20,
+            "3.29": 83.43,
+            "3.30": 83.66,
+            "3.31": 83.90,
+            "3.32": 84.13,
+            "3.33": 84.36,
+            "3.34": 84.60,
+            "3.35": 84.83,
+            "3.36": 85.06,
+            "3.37": 85.30,
+            "3.38": 85.53,
+            "3.39": 85.76,
+            "3.40": 86.00,
+            "3.41": 86.23,
+            "3.42": 86.46,
+            "3.43": 86.70,
+            "3.44": 86.93,
+            "3.45": 87.16,
+            "3.46": 87.40,
+            "3.47": 87.63,
+            "3.48": 87.86,
+            "3.49": 88.10,
+            "3.50": 88.33,
+            "3.51": 88.56,
+            "3.52": 88.80,
+            "3.53": 89.03,
+            "3.54": 89.26,
+            "3.55": 89.50,
+            "3.56": 89.73,
+            "3.57": 89.96,
+            "3.58": 90.20,
+            "3.59": 90.43,
+            "3.60": 90.66,
+            "3.61": 90.90,
+            "3.62": 91.13,
+            "3.63": 91.36,
+            "3.64": 91.60,
+            "3.65": 91.83,
+            "3.66": 92.06,
+            "3.67": 92.30,
+            "3.68": 92.53,
+            "3.69": 92.76,
+            "3.70": 93.00,
+            "3.71": 93.23,
+            "3.72": 93.46,
+            "3.73": 93.70,
+            "3.74": 93.93,
+            "3.75": 94.16,
+            "3.76": 94.40,
+            "3.77": 94.63,
+            "3.78": 94.86,
+            "3.79": 95.10,
+            "3.80": 95.33,
+            "3.81": 95.56,
+            "3.82": 95.80,
+            "3.83": 96.03,
+            "3.84": 96.26,
+            "3.85": 96.50,
+            "3.86": 96.73,
+            "3.87": 96.96,
+            "3.88": 97.20,
+            "3.89": 97.43,
+            "3.90": 97.66,
+            "3.91": 97.90,
+            "3.92": 98.13,
+            "3.93": 98.36,
+            "3.94": 98.60,
+            "3.95": 98.83,
+            "3.96": 99.06,
+            "3.97": 99.30,
+            "3.98": 99.53,
+            "3.99": 99.76,
+            "4.00": 100.00
+        };
+
+        // Hata ve bilgi mesajlarını gizleme fonksiyonu
+        function hideMessages() {
+            noteInputError.classList.add('hidden');
+            notFoundMessage.classList.add('hidden');
+        }
+
+        // Notu dönüştürme fonksiyonu
+        function convertNote() {
+            hideMessages(); // Her dönüştürme öncesi mesajları gizle
+
+            const noteValue = parseFloat(noteInput.value); // Giriş notu
+
+            // Girişin geçerli bir sayı olup olmadığını kontrol et
+            if (isNaN(noteValue)) {
+                noteInputError.classList.remove('hidden');
+                resultDisplay.classList.add('hidden');
+                convertedNote.textContent = '--';
+                return;
+            }
+
+            // Notu string olarak al ve dönüşüm tablosunda ara
+            // parseFloat'tan gelen ondalık hassasiyet sorunlarını önlemek için toString() kullanıldı.
+            const noteKey = noteValue.toFixed(2); // İki ondalık basamakla stringe çevir
+
+            if (conversionTable.hasOwnProperty(noteKey)) {
+                const result = conversionTable[noteKey];
+                convertedNote.textContent = result.toFixed(2); // Sonucu iki ondalık basamakla göster
+                resultDisplay.classList.remove('hidden'); // Sonuç alanını göster
+            } else {
+                notFoundMessage.classList.remove('hidden'); // Bulunamadı mesajını göster
+                resultDisplay.classList.add('hidden'); // Sonuç alanını gizle
+                convertedNote.textContent = '--'; // Sonucu sıfırla
+            }
+        }
+
+        // Butona tıklama olay dinleyicisi ekle
+        convertButton.addEventListener('click', convertNote);
+
+        // Enter tuşuna basıldığında da dönüştürme işlemini yap
+        noteInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                convertNote();
+            }
+        });
+    </script>
+</body>
+</html>
