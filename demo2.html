@@ -1,103 +1,745 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Not Dönüştürücü</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5; /* Hafif gri arka plan */
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analiz Paneli</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#4f46e5',secondary:'#10b981'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+input[type="number"] {
+-moz-appearance: textfield;
+}
+.custom-checkbox {
+position: relative;
+display: inline-block;
+width: 20px;
+height: 20px;
+cursor: pointer;
+}
+.custom-checkbox input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.checkmark {
+position: absolute;
+top: 0;
+left: 0;
+width: 20px;
+height: 20px;
+background-color: #f3f4f6;
+border: 1px solid #d1d5db;
+border-radius: 4px;
+}
+.custom-checkbox input:checked ~ .checkmark {
+background-color: #4f46e5;
+border-color: #4f46e5;
+}
+.checkmark:after {
+content: "";
+position: absolute;
+display: none;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+display: block;
+}
+.custom-checkbox .checkmark:after {
+left: 7px;
+top: 3px;
+width: 6px;
+height: 11px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 44px;
+height: 24px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #e5e7eb;
+transition: .4s;
+border-radius: 24px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+.custom-switch input:checked + .switch-slider {
+background-color: #4f46e5;
+}
+.custom-switch input:checked + .switch-slider:before {
+transform: translateX(20px);
+}
+.custom-range {
+-webkit-appearance: none;
+width: 100%;
+height: 6px;
+background: #e5e7eb;
+border-radius: 5px;
+outline: none;
+}
+.custom-range::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #4f46e5;
+cursor: pointer;
+}
+.custom-range::-moz-range-thumb {
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #4f46e5;
+cursor: pointer;
+border: none;
+}
+</style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border border-gray-200 text-center">
-        
-        <!-- LOGO -->
-        <div class="mb-4">
-            <img src="https://bulenteses26.github.io/not-donusturucu/yenilogo.png" alt="Logo" class="h-20 mx-auto">
-        </div>
+<body class="bg-gray-50 min-h-screen">
+<div class="min-h-screen">
+<!-- Header -->
+<header class="bg-white shadow-sm">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+<div class="flex items-center">
+<h1 class="text-2xl font-semibold text-gray-800">Analiz Paneli</h1>
+</div>
+<div class="flex items-center space-x-4">
+<div class="text-sm text-gray-600">
+<span>23 Mayıs 2025, Cuma</span>
+</div>
+<div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
+<i class="ri-user-line text-gray-600"></i>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Filter Section -->
+<div class="bg-white rounded shadow-sm p-4 mb-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex flex-col sm:flex-row gap-4">
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">Başlangıç Tarihi</label>
+<div class="relative">
+<input type="date" class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="2025-04-23">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-calendar-line text-gray-400"></i>
+</div>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">Bitiş Tarihi</label>
+<div class="relative">
+<input type="date" class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="2025-05-23">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-calendar-line text-gray-400"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">Birim</label>
+<div class="relative">
+<div class="relative">
+<button id="birimDropdownButton" class="w-full bg-white border border-gray-300 rounded px-3 py-2 text-sm text-left focus:outline-none focus:ring-1 focus:ring-primary flex items-center justify-between">
+<span>Tüm Birimler</span>
+<i class="ri-arrow-down-s-line"></i>
+</button>
+<div id="birimDropdown" class="hidden absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200">
+<ul class="py-1 text-sm">
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Tüm Birimler</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Bilgi İşlem</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">İnsan Kaynakları</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Muhasebe</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Satış</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">Durum</label>
+<div class="relative">
+<button id="durumDropdownButton" class="w-full bg-white border border-gray-300 rounded px-3 py-2 text-sm text-left focus:outline-none focus:ring-1 focus:ring-primary flex items-center justify-between">
+<span>Tüm Durumlar</span>
+<i class="ri-arrow-down-s-line"></i>
+</button>
+<div id="durumDropdown" class="hidden absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200">
+<ul class="py-1 text-sm">
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Tüm Durumlar</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Onaylandı</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Beklemede</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Reddedildi</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">İptal Edildi</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="mt-auto">
+<button class="px-4 py-2 bg-primary text-white rounded-button whitespace-nowrap flex items-center">
+<i class="ri-filter-line mr-1"></i>
+Filtrele
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div class="bg-white rounded shadow-sm p-5">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm text-gray-500">Toplam Talep</p>
+<h3 class="text-2xl font-semibold mt-1">1,248</h3>
+<p class="text-xs text-green-500 mt-2 flex items-center">
+<i class="ri-arrow-up-line mr-1"></i>
+<span>%12.5 artış</span>
+</p>
+</div>
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-primary">
+<i class="ri-file-list-3-line ri-lg"></i>
+</div>
+</div>
+</div>
+<div class="bg-white rounded shadow-sm p-5">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm text-gray-500">Onaylanan Talepler</p>
+<h3 class="text-2xl font-semibold mt-1">876</h3>
+<p class="text-xs text-green-500 mt-2 flex items-center">
+<i class="ri-arrow-up-line mr-1"></i>
+<span>%8.3 artış</span>
+</p>
+</div>
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-600">
+<i class="ri-check-line ri-lg"></i>
+</div>
+</div>
+</div>
+<div class="bg-white rounded shadow-sm p-5">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm text-gray-500">Bekleyen Talepler</p>
+<h3 class="text-2xl font-semibold mt-1">243</h3>
+<p class="text-xs text-yellow-500 mt-2 flex items-center">
+<i class="ri-time-line mr-1"></i>
+<span>%3.2 artış</span>
+</p>
+</div>
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-yellow-100 text-yellow-600">
+<i class="ri-time-line ri-lg"></i>
+</div>
+</div>
+</div>
+<div class="bg-white rounded shadow-sm p-5">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm text-gray-500">Reddedilen Talepler</p>
+<h3 class="text-2xl font-semibold mt-1">129</h3>
+<p class="text-xs text-red-500 mt-2 flex items-center">
+<i class="ri-arrow-down-line mr-1"></i>
+<span>%5.1 azalış</span>
+</p>
+</div>
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-red-100 text-red-600">
+<i class="ri-close-line ri-lg"></i>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Chart -->
+<div class="bg-white rounded shadow-sm p-5 mb-6">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+<h2 class="text-lg font-semibold text-gray-800">Talep Miktarı Trendi</h2>
+<div class="flex mt-3 sm:mt-0">
+<div class="relative">
+<button id="periodDropdownButton" class="bg-white border border-gray-300 rounded-l px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary flex items-center">
+<span>Son 30 Gün</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</button>
+<div id="periodDropdown" class="hidden absolute z-10 mt-1 w-40 bg-white shadow-lg rounded-md border border-gray-200">
+<ul class="py-1 text-sm">
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Son 7 Gün</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Son 30 Gün</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Son 90 Gün</li>
+<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">Son 12 Ay</li>
+</ul>
+</div>
+</div>
+<button class="bg-gray-100 border border-gray-300 border-l-0 rounded-r px-3 py-1.5 text-sm focus:outline-none">
+<i class="ri-download-line"></i>
+</button>
+</div>
+</div>
+<div id="mainChart" class="w-full h-80"></div>
+</div>
+<!-- Analysis Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-white rounded shadow-sm p-5">
+<h3 class="text-lg font-semibold text-gray-800 mb-4">Birim Dağılımı</h3>
+<div id="birimChart" class="w-full h-64"></div>
+</div>
+<div class="bg-white rounded shadow-sm p-5">
+<h3 class="text-lg font-semibold text-gray-800 mb-4">Unvan Bazlı Talepler</h3>
+<div id="unvanChart" class="w-full h-64"></div>
+</div>
+<div class="bg-white rounded shadow-sm p-5">
+<h3 class="text-lg font-semibold text-gray-800 mb-4">Durum Dağılımı</h3>
+<div id="durumChart" class="w-full h-64"></div>
+</div>
+<div class="bg-white rounded shadow-sm p-5">
+<h3 class="text-lg font-semibold text-gray-800 mb-4">Talep Miktarı Analizi</h3>
+<div id="miktarChart" class="w-full h-64"></div>
+</div>
+</div>
 
-        <!-- Başlık -->
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">Not Dönüştürücü</h1>
-        <p class="text-gray-600 mb-6">Lütfen notunuzu girin. Sistem, notunuzu tanımlı dönüşüm tablosuna göre 100'lük karşılığı olarak gösterecektir.</p>
-
-        <!-- Not Giriş Alanı -->
-        <div class="mb-6 text-left">
-            <label for="noteInput" class="block text-gray-700 text-sm font-medium mb-2">Notunuz:</label>
-            <input
-                type="number"
-                id="noteInput"
-                placeholder="Örn: 2.25 ya da 3.29"
-                class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
-                step="0.01"
-            />
-            <p id="noteInputError" class="text-red-500 text-xs italic mt-2 hidden">Lütfen geçerli bir not girin.</p>
-            <p id="notFoundMessage" class="text-orange-500 text-xs italic mt-2 hidden">Girilen not dönüşüm tablosunda bulunamadı.</p>
-        </div>
-
-        <!-- Buton -->
-        <button
-            id="convertButton"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-200 ease-in-out shadow-md hover:shadow-lg"
-        >
-            Notu Dönüştür
-        </button>
-
-        <!-- Sonuç -->
-        <div id="resultDisplay" class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg text-center hidden">
-            <p class="text-lg font-medium text-blue-800">100'lük Karşılığı:</p>
-            <p id="convertedNote" class="text-4xl font-extrabold text-blue-700 mt-2">--</p>
-        </div>
-    </div>
-
-    <!-- JavaScript -->
-    <script>
-        const noteInput = document.getElementById('noteInput');
-        const convertButton = document.getElementById('convertButton');
-        const resultDisplay = document.getElementById('resultDisplay');
-        const convertedNote = document.getElementById('convertedNote');
-        const noteInputError = document.getElementById('noteInputError');
-        const notFoundMessage = document.getElementById('notFoundMessage');
-
-        const conversionTable = {
-            "2.25": 59.16,
-            "3.29": 77.13,
-            "4.00": 100.00,
-            "1.00": 30.00,
-            "2.00": 53.33,
-            "2.50": 65.00,
-            "3.00": 70.00,
-            "3.50": 85.00
-        };
-
-        convertButton.addEventListener('click', function () {
-            const note = parseFloat(noteInput.value.replace(",", "."));
-            if (isNaN(note)) {
-                noteInputError.classList.remove('hidden');
-                notFoundMessage.classList.add('hidden');
-                resultDisplay.classList.add('hidden');
-                return;
-            }
-
-            noteInputError.classList.add('hidden');
-            const key = note.toFixed(2);
-            const result = conversionTable[key];
-
-            if (result !== undefined) {
-                convertedNote.textContent = result.toFixed(2);
-                resultDisplay.classList.remove('hidden');
-                notFoundMessage.classList.add('hidden');
-            } else {
-                resultDisplay.classList.add('hidden');
-                notFoundMessage.classList.remove('hidden');
-            }
-        });
-    </script>
+</main>
+</div>
+<script id="dropdownHandlers">
+document.addEventListener('DOMContentLoaded', function() {
+// Birim dropdown
+const birimDropdownButton = document.getElementById('birimDropdownButton');
+const birimDropdown = document.getElementById('birimDropdown');
+if (birimDropdownButton && birimDropdown) {
+birimDropdownButton.addEventListener('click', function() {
+birimDropdown.classList.toggle('hidden');
+});
+birimDropdown.querySelectorAll('li').forEach(item => {
+item.addEventListener('click', function() {
+birimDropdownButton.querySelector('span').textContent = this.textContent;
+birimDropdown.classList.add('hidden');
+});
+});
+}
+// Durum dropdown
+const durumDropdownButton = document.getElementById('durumDropdownButton');
+const durumDropdown = document.getElementById('durumDropdown');
+if (durumDropdownButton && durumDropdown) {
+durumDropdownButton.addEventListener('click', function() {
+durumDropdown.classList.toggle('hidden');
+});
+durumDropdown.querySelectorAll('li').forEach(item => {
+item.addEventListener('click', function() {
+durumDropdownButton.querySelector('span').textContent = this.textContent;
+durumDropdown.classList.add('hidden');
+});
+});
+}
+// Period dropdown
+const periodDropdownButton = document.getElementById('periodDropdownButton');
+const periodDropdown = document.getElementById('periodDropdown');
+if (periodDropdownButton && periodDropdown) {
+periodDropdownButton.addEventListener('click', function() {
+periodDropdown.classList.toggle('hidden');
+});
+periodDropdown.querySelectorAll('li').forEach(item => {
+item.addEventListener('click', function() {
+periodDropdownButton.querySelector('span').textContent = this.textContent;
+periodDropdown.classList.add('hidden');
+});
+});
+}
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(event) {
+if (birimDropdownButton && birimDropdown && !birimDropdownButton.contains(event.target) && !birimDropdown.contains(event.target)) {
+birimDropdown.classList.add('hidden');
+}
+if (durumDropdownButton && durumDropdown && !durumDropdownButton.contains(event.target) && !durumDropdown.contains(event.target)) {
+durumDropdown.classList.add('hidden');
+}
+if (periodDropdownButton && periodDropdown && !periodDropdownButton.contains(event.target) && !periodDropdown.contains(event.target)) {
+periodDropdown.classList.add('hidden');
+}
+});
+});
+</script>
+<script id="chartsInitialization">
+document.addEventListener('DOMContentLoaded', function() {
+// Main Chart - Line Chart
+const mainChart = echarts.init(document.getElementById('mainChart'));
+const mainChartOption = {
+animation: false,
+tooltip: {
+trigger: 'axis',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+borderColor: '#e5e7eb',
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+left: '3%',
+right: '4%',
+bottom: '3%',
+top: '3%',
+containLabel: true
+},
+xAxis: {
+type: 'category',
+boundaryGap: false,
+data: ['23 Nis', '25 Nis', '27 Nis', '29 Nis', '1 May', '3 May', '5 May', '7 May', '9 May', '11 May', '13 May', '15 May', '17 May', '19 May', '21 May', '23 May'],
+axisLine: {
+lineStyle: {
+color: '#e5e7eb'
+}
+},
+axisLabel: {
+color: '#6b7280'
+}
+},
+yAxis: {
+type: 'value',
+axisLine: {
+show: false
+},
+axisTick: {
+show: false
+},
+splitLine: {
+lineStyle: {
+color: '#f3f4f6'
+}
+},
+axisLabel: {
+color: '#6b7280'
+}
+},
+series: [
+{
+name: 'Toplam Talep',
+type: 'line',
+smooth: true,
+symbol: 'none',
+lineStyle: {
+width: 3,
+color: 'rgba(87, 181, 231, 1)'
+},
+areaStyle: {
+color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+{
+offset: 0,
+color: 'rgba(87, 181, 231, 0.2)'
+},
+{
+offset: 1,
+color: 'rgba(87, 181, 231, 0.01)'
+}
+])
+},
+data: [42, 45, 53, 57, 65, 62, 58, 70, 75, 68, 72, 80, 78, 82, 90, 85]
+},
+{
+name: 'Onaylanan',
+type: 'line',
+smooth: true,
+symbol: 'none',
+lineStyle: {
+width: 3,
+color: 'rgba(141, 211, 199, 1)'
+},
+areaStyle: {
+color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+{
+offset: 0,
+color: 'rgba(141, 211, 199, 0.2)'
+},
+{
+offset: 1,
+color: 'rgba(141, 211, 199, 0.01)'
+}
+])
+},
+data: [30, 32, 38, 40, 45, 43, 40, 48, 52, 48, 50, 56, 54, 58, 63, 60]
+}
+]
+};
+mainChart.setOption(mainChartOption);
+// Birim Chart - Pie Chart
+const birimChart = echarts.init(document.getElementById('birimChart'));
+const birimChartOption = {
+animation: false,
+tooltip: {
+trigger: 'item',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+borderColor: '#e5e7eb',
+textStyle: {
+color: '#1f2937'
+}
+},
+legend: {
+orient: 'vertical',
+right: '5%',
+top: 'center',
+textStyle: {
+color: '#1f2937'
+}
+},
+series: [
+{
+name: 'Birim Dağılımı',
+type: 'pie',
+radius: ['45%', '70%'],
+center: ['40%', '50%'],
+avoidLabelOverlap: false,
+itemStyle: {
+borderRadius: 8,
+borderColor: '#fff',
+borderWidth: 2
+},
+label: {
+show: false
+},
+emphasis: {
+label: {
+show: false
+}
+},
+data: [
+{ value: 485, name: 'Bilgi İşlem' },
+{ value: 310, name: 'İnsan Kaynakları' },
+{ value: 234, name: 'Muhasebe' },
+{ value: 219, name: 'Satış' }
+],
+color: ['rgba(87, 181, 231, 1)', 'rgba(141, 211, 199, 1)', 'rgba(251, 191, 114, 1)', 'rgba(252, 141, 98, 1)']
+}
+]
+};
+birimChart.setOption(birimChartOption);
+// Unvan Chart - Bar Chart
+const unvanChart = echarts.init(document.getElementById('unvanChart'));
+const unvanChartOption = {
+animation: false,
+tooltip: {
+trigger: 'axis',
+axisPointer: {
+type: 'shadow'
+},
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+borderColor: '#e5e7eb',
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+left: '3%',
+right: '4%',
+bottom: '3%',
+top: '3%',
+containLabel: true
+},
+xAxis: {
+type: 'value',
+axisLine: {
+lineStyle: {
+color: '#e5e7eb'
+}
+},
+axisLabel: {
+color: '#6b7280'
+},
+splitLine: {
+lineStyle: {
+color: '#f3f4f6'
+}
+}
+},
+yAxis: {
+type: 'category',
+data: ['Uzman Yrd.', 'Uzman', 'Kıdemli Uzman', 'Yönetici', 'Müdür'],
+axisLine: {
+lineStyle: {
+color: '#e5e7eb'
+}
+},
+axisLabel: {
+color: '#6b7280'
+}
+},
+series: [
+{
+name: 'Talep Sayısı',
+type: 'bar',
+data: [320, 420, 280, 150, 78],
+itemStyle: {
+color: 'rgba(87, 181, 231, 1)',
+borderRadius: [0, 4, 4, 0]
+}
+}
+]
+};
+unvanChart.setOption(unvanChartOption);
+// Durum Chart - Doughnut Chart
+const durumChart = echarts.init(document.getElementById('durumChart'));
+const durumChartOption = {
+animation: false,
+tooltip: {
+trigger: 'item',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+borderColor: '#e5e7eb',
+textStyle: {
+color: '#1f2937'
+}
+},
+legend: {
+orient: 'vertical',
+right: '5%',
+top: 'center',
+textStyle: {
+color: '#1f2937'
+}
+},
+series: [
+{
+name: 'Durum Dağılımı',
+type: 'pie',
+radius: ['45%', '70%'],
+center: ['40%', '50%'],
+avoidLabelOverlap: false,
+itemStyle: {
+borderRadius: 8,
+borderColor: '#fff',
+borderWidth: 2
+},
+label: {
+show: false
+},
+emphasis: {
+label: {
+show: false
+}
+},
+data: [
+{ value: 876, name: 'Onaylandı' },
+{ value: 243, name: 'Beklemede' },
+{ value: 129, name: 'Reddedildi' }
+],
+color: ['rgba(141, 211, 199, 1)', 'rgba(251, 191, 114, 1)', 'rgba(252, 141, 98, 1)']
+}
+]
+};
+durumChart.setOption(durumChartOption);
+// Miktar Chart - Area Chart
+const miktarChart = echarts.init(document.getElementById('miktarChart'));
+const miktarChartOption = {
+animation: false,
+tooltip: {
+trigger: 'axis',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+borderColor: '#e5e7eb',
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+left: '3%',
+right: '4%',
+bottom: '3%',
+top: '3%',
+containLabel: true
+},
+xAxis: {
+type: 'category',
+boundaryGap: false,
+data: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs'],
+axisLine: {
+lineStyle: {
+color: '#e5e7eb'
+}
+},
+axisLabel: {
+color: '#6b7280'
+}
+},
+yAxis: {
+type: 'value',
+axisLine: {
+show: false
+},
+axisTick: {
+show: false
+},
+splitLine: {
+lineStyle: {
+color: '#f3f4f6'
+}
+},
+axisLabel: {
+color: '#6b7280'
+}
+},
+series: [
+{
+name: 'Talep Miktarı',
+type: 'line',
+smooth: true,
+symbol: 'none',
+areaStyle: {
+color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+{
+offset: 0,
+color: 'rgba(251, 191, 114, 0.2)'
+},
+{
+offset: 1,
+color: 'rgba(251, 191, 114, 0.01)'
+}
+])
+},
+lineStyle: {
+width: 3,
+color: 'rgba(251, 191, 114, 1)'
+},
+data: [150, 230, 224, 218, 135]
+}
+]
+};
+miktarChart.setOption(miktarChartOption);
+// Resize charts when window is resized
+window.addEventListener('resize', function() {
+mainChart.resize();
+birimChart.resize();
+unvanChart.resize();
+durumChart.resize();
+miktarChart.resize();
+});
+});
+</script>
 </body>
 </html>
