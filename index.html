@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Dönüştürücü</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Hafif gri arka plan */
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border border-gray-200 text-center">
+        
+        <!-- LOGO -->
+        <div class="mb-4">
+            <img src="https://bulenteses26.github.io/not-donusturucu/yenilogo.png" alt="Logo" class="h-20 mx-auto">
+        </div>
+
+        <!-- Başlık -->
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">Not Dönüştürücü</h1>
+        <p class="text-gray-600 mb-6">Lütfen notunuzu girin. Sistem, notunuzu tanımlı dönüşüm tablosuna göre 100'lük karşılığı olarak gösterecektir.</p>
+
+        <!-- Not Giriş Alanı -->
+        <div class="mb-6 text-left">
+            <label for="noteInput" class="block text-gray-700 text-sm font-medium mb-2">Notunuz:</label>
+            <input
+                type="number"
+                id="noteInput"
+                placeholder="Örn: 2.25 ya da 3.29"
+                class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                step="0.01"
+            />
+            <p id="noteInputError" class="text-red-500 text-xs italic mt-2 hidden">Lütfen geçerli bir not girin.</p>
+            <p id="notFoundMessage" class="text-orange-500 text-xs italic mt-2 hidden">Girilen not dönüşüm tablosunda bulunamadı.</p>
+        </div>
+
+        <!-- Buton -->
+        <button
+            id="convertButton"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-200 ease-in-out shadow-md hover:shadow-lg"
+        >
+            Notu Dönüştür
+        </button>
+
+        <!-- Sonuç -->
+        <div id="resultDisplay" class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg text-center hidden">
+            <p class="text-lg font-medium text-blue-800">100'lük Karşılığı:</p>
+            <p id="convertedNote" class="text-4xl font-extrabold text-blue-700 mt-2">--</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const noteInput = document.getElementById('noteInput');
+        const convertButton = document.getElementById('convertButton');
+        const resultDisplay = document.getElementById('resultDisplay');
+        const convertedNote = document.getElementById('convertedNote');
+        const noteInputError = document.getElementById('noteInputError');
+        const notFoundMessage = document.getElementById('notFoundMessage');
+
+        const conversionTable = {
+            "2.25": 59.16,
+            "3.29": 77.13,
+            "4.00": 100.00,
+            "1.00": 30.00,
+            "2.00": 53.33,
+            "2.50": 65.00,
+            "3.00": 70.00,
+            "3.50": 85.00
+        };
+
+        convertButton.addEventListener('click', function () {
+            const note = parseFloat(noteInput.value.replace(",", "."));
+            if (isNaN(note)) {
+                noteInputError.classList.remove('hidden');
+                notFoundMessage.classList.add('hidden');
+                resultDisplay.classList.add('hidden');
+                return;
+            }
+
+            noteInputError.classList.add('hidden');
+            const key = note.toFixed(2);
+            const result = conversionTable[key];
+
+            if (result !== undefined) {
+                convertedNote.textContent = result.toFixed(2);
+                resultDisplay.classList.remove('hidden');
+                notFoundMessage.classList.add('hidden');
+            } else {
+                resultDisplay.classList.add('hidden');
+                notFoundMessage.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
